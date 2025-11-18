@@ -10,7 +10,7 @@ public class PaneOrganizer {
         this.root = new BorderPane();
         this.createGamePane();
 
-        SetupGame game = new SetupGame(this.gamePane);
+        Game game = new Game(this.gamePane);
         Controls controls = new Controls(game);
 
         this.root.setRight(controls.getPane());

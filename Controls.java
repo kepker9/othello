@@ -2,11 +2,9 @@ package othello;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
@@ -21,7 +19,7 @@ import javafx.scene.layout.VBox;
  */
 public class Controls {
 
-  private SetupGame game;
+  private Game game;
 
   private VBox controlsPane;
 
@@ -29,7 +27,7 @@ public class Controls {
   // selected when the user starts each game.
   private RadioButton[][] playerButtons;
 
-  public Controls(SetupGame othello) {
+  public Controls(Game othello) {
     this.game = othello;
 
     this.controlsPane = new VBox();

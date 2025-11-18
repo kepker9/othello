@@ -2,9 +2,15 @@ package othello;
 
 import javafx.scene.layout.Pane;
 
-public class SetupGame {
+public class Game {
     private Board board;
-    public SetupGame(Pane pane){
+
+    private Referee referee;
+    public Game(Pane pane){
         this.board = new Board(pane);
+
+
+
     }
+
 }
