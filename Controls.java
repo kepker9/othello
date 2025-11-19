@@ -12,6 +12,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
+import java.net.SocketOption;
+
 /*
  * Controls sets up the GUI for the game menu, allowing the user to pick the
  * game modes and to start and track games. Controls holds a one-way reference
@@ -153,6 +155,8 @@ public class Controls {
           }
         }
       }
+      this.game.setUpPlayers(whitePlayerMode, blackPlayerMode);
+
 
       /* TODO: Set the Game's players, which starts the game. whitePlayerMode and blackPlayerMode store the modes of
           the players, where 0 is HumanPlayer, and 1-3 are levels 1-3 of ComputerPlayer respectively. We also provide
