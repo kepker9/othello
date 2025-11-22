@@ -22,7 +22,8 @@ import java.net.SocketOption;
 public class Controls {
 
   private Game game;
-
+  private Label scoreLabel;
+  private Label turnLabel;
   private VBox controlsPane;
 
   // Arrays for player buttons. Each button is checked to see if it is
@@ -38,13 +39,18 @@ public class Controls {
     this.controlsPane.setAlignment(Pos.CENTER);
 
     this.setupInstructions();
+
+
     /* TODO: Add score & turn labels. These should be contained in whatever class is controlling turn-taking, but
         be sure to add them to the this.controlsPane here!  */
+    this.scoreLabel = this.game.getScoreLabel();
+    this.turnLabel = this.game.getTurnLabel();
+    this.controlsPane.getChildren().addAll(this.scoreLabel, this.turnLabel);
 
     this.setupMenu();
     this.setupGameButtons();
   }
-
+  //done
   // TODO: Be sure to use this method to add the control pane to the this.root pane in Pane Organizer
   public Pane getPane() {
     return this.controlsPane;
@@ -157,7 +163,7 @@ public class Controls {
       }
       this.game.setUpPlayers(whitePlayerMode, blackPlayerMode);
 
-
+      //done
       /* TODO: Set the Game's players, which starts the game. whitePlayerMode and blackPlayerMode store the modes of
           the players, where 0 is HumanPlayer, and 1-3 are levels 1-3 of ComputerPlayer respectively. We also provide
           whitePlayerDeterministic and blackPlayerDeterministic which stores whether the players should be
@@ -170,6 +176,7 @@ public class Controls {
   /* TODO: Fill out this handle method once you have figured out how to reset the game.
       This will most likely not be done until after you have implemented turn-taking and score-keeping */
     public void resetHandler(ActionEvent e){ }
+
 
 
 

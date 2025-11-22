@@ -1,27 +1,33 @@
 package othello;
 
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+
 
 public class Game {
     private Board board;
     private Player[] players; //white player - player 0, black player - player 1
     private Referee referee;
     private Pane gamePane;
-    public Game(BorderPane rootPane, Pane gamePane){
+    public static int whiteScore = 2;
+    public static int blackScore = 2;
+    private Label scoreLabel;
+    private Label turnLabel;
+    public Game(Pane gamePane){
         this.board = new Board(gamePane);
         this.gamePane = gamePane;
-        this.setUpControls(rootPane);
         this.players = new Player[2];
+
+        this.createLabels();
     }
-    private void setUpControls(BorderPane rootPane){
-        Controls controls = new Controls(this);
-        rootPane.setRight(controls.getPane());
-    }
+    /**
+     * Instantiates two players according to the selected modes (human or some level of AI).
+     * Creates the Referee, sets Referee for each player, and starts the first move
+     */
     public void setUpPlayers(int whitePlayerMode, int blackPlayerMode){
         switch (whitePlayerMode){
             case 0:
-                this.players[0] = new PlayerHuman();
+                this.players[0] = new PlayerHuman(true, this.board);
                 break;
             case 1:
                 this.players[0] = new PlayerComputer();
@@ -33,7 +39,7 @@ public class Game {
         //this code is slightly duplicated because we need to have only one referee for both players
         switch (blackPlayerMode){
             case 0:
-                this.players[1] = new PlayerHuman();
+                this.players[1] = new PlayerHuman(false, this.board);
                 break;
             case 1:
                 this.players[1] = new PlayerComputer();
@@ -42,12 +48,18 @@ public class Game {
                 //make another levels of computer AI
                 break;
         }
-        this.referee = new Referee(this.players, this.board, this.gamePane);
+        this.referee = new Referee(this.players, this.board, this.gamePane, this.scoreLabel, this.turnLabel);
         this.players[0].setReferee(this.referee);
         this.players[1].setReferee(this.referee);
         this.referee.nextMove();
-
     }
-
-
+    /**
+     * Creates the score and turn labels
+     */
+    private void createLabels() {
+        this.scoreLabel = new Label("White: " + whiteScore + " - Black: " + blackScore);
+        this.turnLabel = new Label("");
+    }
+    public Label getScoreLabel() { return this.scoreLabel; }
+    public Label getTurnLabel() { return this.turnLabel; }
 }
