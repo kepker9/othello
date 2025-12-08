@@ -1,9 +1,13 @@
 package othello;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 /**
  * Referee controls turn-taking, checks for valid moves, tracks user's mouse clicks, places new pieces, and
@@ -16,6 +20,9 @@ public class Referee {
     private Player[] players;
     private Label scoreLabel;
     private Label turnLabel;
+    private Timeline timeline;
+    private Move pendingMove;
+
     /**
      * Constructor
      */
@@ -28,6 +35,8 @@ public class Referee {
         this.turnLabel = turnLabel;
 
         this.whiteTurn = true; //temporarily white pieces go first, but later will add random turn
+
+        this.makeTimeline();
     }
     /**
      * Initiates the next turn by calling makeMove() on the current player whether it's human or computer.
@@ -40,6 +49,7 @@ public class Referee {
         else{
             this.players[1].makeMove();
         }
+
     }
     /**
      * Converts a mouse click output into board coordinates and if the piece can be placed in the clicked
@@ -66,11 +76,20 @@ public class Referee {
     private void deactivateMouse(){
         this.gamePane.setOnMouseClicked(null);
     }
+    public void computerAddPiece(Move move){
+        this.pendingMove = move;
+        this.timeline.play();
+    }
+    private void waitAndAddPiece(){
+        this.timeline.stop();
+        this.board.clickedLegalSquare(this.pendingMove.getX(), this.pendingMove.getY(), this.whiteTurn);
+        this.addPiece(this.pendingMove);
+    }
     /**
      * Adds a new piece to the board at the given coordinates, switches turns, updates game labels,
      * and starts the next move.
      */
-    public void addPiece(Move move){
+    private void addPiece(Move move){
         if (this.whiteTurn){
             this.board.addPiece(move.getX(), move.getY(), Color.WHITE, this.gamePane);
             Game.whiteScore++;
@@ -103,9 +122,9 @@ public class Referee {
         this.board.updateLegalMoves(isWhite);
         return !this.board.getLegalMoves().isEmpty();
     }
-    private void checkForEndGame(){
-        boolean player1CanMove = playerHasMove(true);
-        boolean player2CanMove = playerHasMove(false);
+    public void checkForEndGame(){
+        boolean player1CanMove = this.playerHasMove(true);
+        boolean player2CanMove = this.playerHasMove(false);
         if (!player1CanMove && !player2CanMove) {
             this.endGame();
         }
@@ -123,5 +142,14 @@ public class Referee {
         }
         this.scoreLabel.setText(result);
         //and stop everything
+    }
+    public boolean getTurn(){
+        return this.whiteTurn;
+    }
+    private void makeTimeline(){
+        KeyFrame kf = new KeyFrame(Duration.seconds(Constants.TIME_BETWEEN_COMPUTER_MOVES),
+                (ActionEvent e) -> this.waitAndAddPiece());
+        this.timeline = new Timeline(kf);
+        this.timeline.setCycleCount(1);
     }
 }

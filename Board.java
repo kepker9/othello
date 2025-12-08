@@ -66,6 +66,16 @@ public class Board {
     public void addPiece(int x, int y, Color color, Pane gamePane){
         this.pieces[x][y] = new PieceNormal(x, y, color, gamePane);
     }
+    public void addDummyPiece(Move move, boolean isWhite){
+        Color color;
+        if(isWhite){
+            color = Color.WHITE;
+        }
+        else{
+            color = Color.BLACK;
+        }
+        this.pieces[move.getX()][move.getY()] = new PieceDummy(color);
+    }
     /**
      * Checks whether a move may be played at the given coordinates. Verifies that the square is empty,
      * not on the border, and that playing here would flip at least one opponent piece.
@@ -193,13 +203,11 @@ public class Board {
         int score = 0;
         for (int x = 1; x <= 8; x++) {
             for (int y = 1; y <= 8; y++) {
-
                 Piece piece = this.pieces[x][y];
                 if (piece == null){
                     continue;
                 }
-
-                int w = Constants.WEIGHTS[x-1][y-1]; //convert to 0–7 indexes
+                int w = Constants.WEIGHTS[x-1][y-1];
 
                 if (whiteTurn) {
                     if (piece.getColor() == Color.WHITE) {
@@ -233,4 +241,5 @@ public class Board {
     public ArrayList<Move> getLegalMoves(){
         return this.legalMoves;
     }
+
 }
