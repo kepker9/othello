@@ -30,10 +30,13 @@ public class Game {
                 this.players[0] = new PlayerHuman(true, this.board);
                 break;
             case 1:
-                this.players[0] = new PlayerComputer();
+                this.players[0] = new PlayerComputer(1, this.board);
+                break;
+            case 2:
+                this.players[0] = new PlayerComputer(2, this.board);
                 break;
             default:
-                //make another levels of computer AI
+                this.players[0] = new PlayerComputer(3, this.board);
                 break;
         }
         //this code is slightly duplicated because we need to have only one referee for both players
@@ -42,10 +45,13 @@ public class Game {
                 this.players[1] = new PlayerHuman(false, this.board);
                 break;
             case 1:
-                this.players[1] = new PlayerComputer();
+                this.players[1] = new PlayerComputer(1, this.board);
+                break;
+            case 2:
+                this.players[1] = new PlayerComputer(2, this.board);
                 break;
             default:
-                //make another levels of computer AI
+                this.players[1] = new PlayerComputer(3, this.board);
                 break;
         }
         this.referee = new Referee(this.players, this.board, this.gamePane, this.scoreLabel, this.turnLabel);

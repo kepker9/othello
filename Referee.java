@@ -33,6 +33,7 @@ public class Referee {
      * Initiates the next turn by calling makeMove() on the current player whether it's human or computer.
      */
     public void nextMove(){
+        this.checkForEndGame();
         if(this.whiteTurn){
             this.players[0].makeMove();
         }
@@ -47,9 +48,10 @@ public class Referee {
     private void handleClick(MouseEvent e){
         int x = (int)e.getX() / Constants.SQUARE_WIDTH;
         int y = (int)e.getY() / Constants.SQUARE_WIDTH;
-        if (this.board.clickedHighlightedSquare(x, y, this.whiteTurn)) {
-            this.deavtivateMouse();
-            this.addPiece(x, y);
+        Move move = new Move(x, y);
+        if (this.board.clickedLegalSquare(x, y, this.whiteTurn)) {
+            this.deactivateMouse();
+            this.addPiece(move);
         }
     }
     /**
@@ -61,20 +63,20 @@ public class Referee {
     /**
      * Disables mouse input.
      */
-    private void deavtivateMouse(){
+    private void deactivateMouse(){
         this.gamePane.setOnMouseClicked(null);
     }
     /**
      * Adds a new piece to the board at the given coordinates, switches turns, updates game labels,
      * and starts the next move.
      */
-    public void addPiece(int x, int y){
+    public void addPiece(Move move){
         if (this.whiteTurn){
-            this.board.getPiecesArray()[x][y] = new Piece(x, y, Color.WHITE, this.gamePane);
+            this.board.addPiece(move.getX(), move.getY(), Color.WHITE, this.gamePane);
             Game.whiteScore++;
         }
         else{
-            this.board.getPiecesArray()[x][y] = new Piece(x, y, Color.BLACK, this.gamePane);
+            this.board.addPiece(move.getX(), move.getY(), Color.BLACK, this.gamePane);
             Game.blackScore++;
         }
         this.updateScoreLabel();
@@ -96,5 +98,30 @@ public class Referee {
      */
     private void updateScoreLabel() {
         this.scoreLabel.setText("White: " + Game.whiteScore + " - Black: " + Game.blackScore);
+    }
+    private boolean playerHasMove(boolean isWhite) {
+        this.board.updateLegalMoves(isWhite);
+        return !this.board.getLegalMoves().isEmpty();
+    }
+    private void checkForEndGame(){
+        boolean player1CanMove = playerHasMove(true);
+        boolean player2CanMove = playerHasMove(false);
+        if (!player1CanMove && !player2CanMove) {
+            this.endGame();
+        }
+    }
+    private void endGame(){
+        String result;
+        if (Game.whiteScore > Game.blackScore){
+            result = "GAME OVER: White player wins!";
+        }
+        else if (Game.whiteScore < Game.blackScore){
+            result = "GAME OVER: Black player wins!";
+        }
+        else {
+            result = "GAME OVER: It's a tie!";
+        }
+        this.scoreLabel.setText(result);
+        //and stop everything
     }
 }

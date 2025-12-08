@@ -2,3 +2,11 @@ TO WRITE ABOUT IN README:
 
 * referee tracks clicks instead of players
 *bug - when pressing applySettings turn goes to white but white can place pieces to all lime squares
+
+
+Potential bells and wistles:
+* animated flipping
+* turning on and off highliting
+* display the last move made by a player
+* custom player colors
+

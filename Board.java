@@ -2,6 +2,9 @@ package othello;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+
 /**
  * The Board class manages the full game grid, including both the visual squares and the logical piece positions.
  * It sets the starting layout, validates moves, detects flippable lines, performs flips, and
@@ -10,11 +13,27 @@ import javafx.scene.paint.Color;
 public class Board {
     private Square[][] squares;
     private Piece[][] pieces;
+    private ArrayList<Move> legalMoves;
+
     public Board(Pane pane){
         this.squares = new Square[10][10]; //column first then row; x first then y
-        this.pieces = new Piece[10][10]; //indexes 0 and 9 are always empty
+        this.pieces = new PieceNormal[10][10]; //indexes 0 and 9 are always empty
+        this.legalMoves = new ArrayList<>();
         this.generateBoard(pane);
         this.setInitialPieces(pane);
+
+        ArrayList<int[]> legalMovesList = new ArrayList<>();
+    }
+    public Board(Board original) {
+        this.pieces = new PieceDummy[10][10];
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                if (original.pieces[x][y] != null) {
+                    Color color = original.pieces[x][y].getColor();
+                    this.pieces[x][y] = new PieceDummy(color);
+                }
+            }
+        }
     }
     /**
      * Generates all visual Square objects on the board.
@@ -39,17 +58,21 @@ public class Board {
      * Places the initial four pieces
      */
     private void setInitialPieces(Pane pane){
-        this.pieces[4][4] = new Piece(4, 4, Color.WHITE, pane);
-        this.pieces[5][5] = new Piece(5, 5, Color.WHITE, pane);
-        this.pieces[4][5] = new Piece(4, 5, Color.BLACK, pane);
-        this.pieces[5][4] = new Piece(5, 4, Color.BLACK, pane);
+        this.pieces[4][4] = new PieceNormal(4, 4, Color.WHITE, pane);
+        this.pieces[5][5] = new PieceNormal(5, 5, Color.WHITE, pane);
+        this.pieces[4][5] = new PieceNormal(4, 5, Color.BLACK, pane);
+        this.pieces[5][4] = new PieceNormal(5, 4, Color.BLACK, pane);
     }
-    public Piece[][] getPiecesArray(){return this.pieces;}
+    public void addPiece(int x, int y, Color color, Pane gamePane){
+        this.pieces[x][y] = new PieceNormal(x, y, color, gamePane);
+    }
     /**
      * Checks whether a move may be played at the given coordinates. Verifies that the square is empty,
      * not on the border, and that playing here would flip at least one opponent piece.
      */
-    public boolean moveLegal(int x, int y, boolean isWhiteTurn){
+    private boolean moveLegal(Move move, boolean isWhiteTurn){
+        int x = move.getX();
+        int y = move.getY();
         if (x==0 || y==0 || x==9 || y==9){
             return false;
         }
@@ -132,39 +155,82 @@ public class Board {
     /**
      * Highlights all legal move squares for the current player
      */
-    public void highlightPossibleMoves(boolean isWhiteTurn){
-        for (int x = 1; x<10; x++){
-            for (int y = 1; y<10; y++){
-                if (this.moveLegal(x, y, isWhiteTurn)){
-                    this.squares[x][y].setColor(Color.LIME);
-                }
-            }
+    public void highlightPossibleMoves(){
+        for (Move move:this.legalMoves){
+            int x = move.getX();
+            int y = move.getY();
+            this.squares[x][y].setColor(Color.LIME);
         }
     }
     /**
      * Handles the action of clicking a highlighted square. If the square is a valid move, it resets all
      * square colors to default dark green color and returns true. Otherwise, rejects the click and returns false.
      */
-    public boolean clickedHighlightedSquare(int squareX, int squareY, boolean whiteTurn){
-        if (this.squares[squareX][squareY].getColor()==Color.LIME){
-            for (int x = 1; x<10; x++){
-                for (int y = 1; y<10; y++){
+    public boolean clickedLegalSquare(int squareX, int squareY, boolean whiteTurn){
+        for (Move move : this.legalMoves) {
+            if (move.getX() == squareX && move.getY() == squareY) {
+                for (Move move2:this.legalMoves){
+                    int x = move2.getX();
+                    int y = move2.getY();
                     this.squares[x][y].setColor(Color.DARKGREEN);
                 }
-            }
-            Color color;
-            if(whiteTurn){
-                color = Color.WHITE;
-            }
-            else{
-                color = Color.BLACK;
-            }
-            this.flipPieces(squareX,squareY, color);
+                Color color;
+                if(whiteTurn){
+                    color = Color.WHITE;
+                }
+                else{
+                    color = Color.BLACK;
+                }
+                this.flipPieces(squareX,squareY, color);
 
-            return true;
+                return true;
+            }
         }
-        else{
-            return false;
+        return false;
+
+    }
+    public int evaluateBoard(boolean whiteTurn) {
+        int score = 0;
+        for (int x = 1; x <= 8; x++) {
+            for (int y = 1; y <= 8; y++) {
+
+                Piece piece = this.pieces[x][y];
+                if (piece == null){
+                    continue;
+                }
+
+                int w = Constants.WEIGHTS[x-1][y-1]; //convert to 0–7 indexes
+
+                if (whiteTurn) {
+                    if (piece.getColor() == Color.WHITE) {
+                        score = score + w;
+                    } else {
+                        score = score - w;
+                    }
+                } else {
+                    if (piece.getColor() == Color.BLACK) {
+                        score = score + w;
+                    } else {
+                        score = score - w;
+                    }
+                }
+            }
         }
+        return score;
+    }
+    public void updateLegalMoves(boolean isWhite) {
+        ArrayList<Move> moves = new ArrayList<>();
+        for (int x = 1; x <=8; x++) {
+            for (int y = 1; y <= 8; y++) {
+                Move move = new Move(x,y);
+                if (this.moveLegal(move, isWhite)) {
+                    moves.add(move);
+                }
+            }
+        }
+        this.legalMoves = moves;
+    }
+    public ArrayList<Move> getLegalMoves(){
+        return this.legalMoves;
     }
 }

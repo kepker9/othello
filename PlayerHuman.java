@@ -12,7 +12,6 @@ public class PlayerHuman implements Player{
         this.isWhite = isWhite;
         this.board = board;
     }
-
     public void setReferee(Referee referee){this.referee = referee;}
     /**
      * This method starts player's turn.
@@ -20,9 +19,8 @@ public class PlayerHuman implements Player{
      * Highlights all possible squares to play and activates mouse input so the user may choose a square.
      */
     public void makeMove(){
-        this.board.highlightPossibleMoves(this.isWhite);
+        this.board.updateLegalMoves(this.isWhite);
+        this.board.highlightPossibleMoves();
         this.referee.activateMouse();
     }
-
-
 }
