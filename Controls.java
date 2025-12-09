@@ -144,7 +144,6 @@ public class Controls {
   /*
    * Handler for Apply Settings button.
    */
-
     public void applySettings(ActionEvent e) {
 
       // Determine game play mode for each player.
@@ -161,23 +160,9 @@ public class Controls {
           }
         }
       }
-      this.game.setUpPlayers(whitePlayerMode, blackPlayerMode);
-
-      //done
-      /* TODO: Set the Game's players, which starts the game. whitePlayerMode and blackPlayerMode store the modes of
-          the players, where 0 is HumanPlayer, and 1-3 are levels 1-3 of ComputerPlayer respectively. We also provide
-          whitePlayerDeterministic and blackPlayerDeterministic which stores whether the players should be
-          deterministic or not, but feel free to ignore these unless you are doing the deterministic Bells&Whistles.
-          You should have a method in the game class that sets the players of the game, and then call this method here
-          with the information we provided! */
-
+      this.game.applySettings(whitePlayerMode, blackPlayerMode);
   }
-
-  /* TODO: Fill out this handle method once you have figured out how to reset the game.
-      This will most likely not be done until after you have implemented turn-taking and score-keeping */
-    public void resetHandler(ActionEvent e){ }
-
-
-
-
+    public void resetHandler(ActionEvent e){
+      this.game.resetGame();
+    }
 }

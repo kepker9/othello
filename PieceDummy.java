@@ -1,5 +1,6 @@
 package othello;
 
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 //piece class that has no graphics
@@ -20,4 +21,5 @@ public class PieceDummy implements Piece{
             this.color=Color.WHITE;
         }
     }
+    public void deleteFromPane(Pane pane){} //empty method because we don't need it
 }

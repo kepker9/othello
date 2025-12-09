@@ -67,6 +67,9 @@ public class Board {
         this.pieces[x][y] = new PieceNormal(x, y, color, gamePane);
     }
     public void addDummyPiece(Move move, boolean isWhite){
+        //flip dummy pieces and then add a piece
+        int x = move.getX();
+        int y = move.getY();
         Color color;
         if(isWhite){
             color = Color.WHITE;
@@ -74,6 +77,7 @@ public class Board {
         else{
             color = Color.BLACK;
         }
+        this.flipPieces(x, y, color);
         this.pieces[move.getX()][move.getY()] = new PieceDummy(color);
     }
     /**
@@ -115,7 +119,6 @@ public class Board {
                 }
             }
         }
-
         return false;
     }
     /**
@@ -125,7 +128,7 @@ public class Board {
      */
     private boolean checkOneDirection(int nextX, int nextY, int deltaX, int deltaY,
                                       Color playerColor, boolean seenOpponent, boolean flippingMode){
-        if (nextX==0 || nextY==0 || nextX==9 || nextY==9 || this.pieces[nextX][nextY]==null){
+        if (nextX<1 || nextY<1 || nextX>8 || nextY>8 || this.pieces[nextX][nextY]==null){
             return false;
         }
         else if(this.pieces[nextX][nextY].getColor() != playerColor){
@@ -165,25 +168,29 @@ public class Board {
     /**
      * Highlights all legal move squares for the current player
      */
-    public void highlightPossibleMoves(){
+    public void highlightPossibleMoves(boolean highlight){
+        Color color;
+        if(highlight){
+            color = Color.LIME;
+        }
+        else{
+            color = Color.DARKGREEN;
+        }
         for (Move move:this.legalMoves){
             int x = move.getX();
             int y = move.getY();
-            this.squares[x][y].setColor(Color.LIME);
+            this.squares[x][y].setColor(color);
         }
     }
     /**
      * Handles the action of clicking a highlighted square. If the square is a valid move, it resets all
      * square colors to default dark green color and returns true. Otherwise, rejects the click and returns false.
      */
+    //this method also flips all the pieces!
     public boolean clickedLegalSquare(int squareX, int squareY, boolean whiteTurn){
         for (Move move : this.legalMoves) {
             if (move.getX() == squareX && move.getY() == squareY) {
-                for (Move move2:this.legalMoves){
-                    int x = move2.getX();
-                    int y = move2.getY();
-                    this.squares[x][y].setColor(Color.DARKGREEN);
-                }
+                this.highlightPossibleMoves(false);
                 Color color;
                 if(whiteTurn){
                     color = Color.WHITE;
@@ -199,7 +206,7 @@ public class Board {
         return false;
 
     }
-    public int evaluateBoard(boolean whiteTurn) {
+    public int evaluateBoard(){
         int score = 0;
         for (int x = 1; x <= 8; x++) {
             for (int y = 1; y <= 8; y++) {
@@ -209,18 +216,11 @@ public class Board {
                 }
                 int w = Constants.WEIGHTS[x-1][y-1];
 
-                if (whiteTurn) {
-                    if (piece.getColor() == Color.WHITE) {
-                        score = score + w;
-                    } else {
-                        score = score - w;
-                    }
+                //positive - good for white, negative - good for Black
+                if (piece.getColor() == Color.WHITE) {
+                    score = score + w;
                 } else {
-                    if (piece.getColor() == Color.BLACK) {
-                        score = score + w;
-                    } else {
-                        score = score - w;
-                    }
+                    score = score - w;
                 }
             }
         }
@@ -240,6 +240,25 @@ public class Board {
     }
     public ArrayList<Move> getLegalMoves(){
         return this.legalMoves;
+    }
+    public boolean isGameOver() {
+        this.updateLegalMoves(true);
+        boolean whiteCanMove = !this.getLegalMoves().isEmpty();
+        this.updateLegalMoves(false);
+        boolean blackCanMove = !this.getLegalMoves().isEmpty();
+        return !whiteCanMove && !blackCanMove;
+    }
+    public void resetBoard(Pane pane) {
+        this.highlightPossibleMoves(false);
+        for (int x = 1; x <= 8; x++) {
+            for (int y = 1; y <= 8; y++) {
+                if(this.pieces[x][y]!=null){
+                    this.pieces[x][y].deleteFromPane(pane);
+                }
+                this.pieces[x][y]=null;
+            }
+        }
+        this.setInitialPieces(pane);
     }
 
 }

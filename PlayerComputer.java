@@ -16,26 +16,72 @@ public class PlayerComputer implements Player {
         this.referee = referee;
     }
     private Move getBestMove(Board board, int intelligence, boolean isWhite) {
+        if (board.isGameOver()) {
+            Move fakeMove = new Move(-1, -1);
+            int value = board.evaluateBoard();
+            if(isWhite){
+                if(value > 0){
+                    fakeMove.setValue(Integer.MAX_VALUE/10);
+                }
+                else if(value < 0){
+                    fakeMove.setValue(Integer.MIN_VALUE/10);
+                }
+                else{
+                    fakeMove.setValue(0);
+                }
+            }else{
+                if(value < 0){
+                    fakeMove.setValue(Integer.MAX_VALUE/10);
+                }
+                else if(value > 0){
+                    fakeMove.setValue(Integer.MIN_VALUE/10);
+                }
+                else{
+                    fakeMove.setValue(0);
+                }
+            }
+            return fakeMove;
+        }
 
-        //if (board.isGameOver()) {
-        //    int eval = board.evaluateBoard(isWhite);
-        //}
         board.updateLegalMoves(isWhite);
         ArrayList<Move> moves = board.getLegalMoves();
+
+        if (moves.isEmpty()) {
+            if (intelligence == 1) {
+                int value = board.evaluateBoard();
+                Move fakeMove = new Move(-1, -1);
+                if (!isWhite) {
+                    value = -value;
+                }
+                fakeMove.setValue(value);
+                return fakeMove;
+            }
+            else {
+                Board dummyBoard = new Board(board);
+                Move reply = this.getBestMove(dummyBoard, intelligence - 1, !isWhite);
+                Move fakeMove = new Move(-1, -1);
+                fakeMove.setValue(-reply.getValue());
+                return fakeMove;
+            }
+        }
         Move bestMove = moves.get(0); //just assign the first possible move to be the best move to begin
         int bestValue = Integer.MIN_VALUE;
+
         for (Move move:moves){
             Board dummyBoard = new Board(board);
             dummyBoard.addDummyPiece(move, isWhite);
             int value;
             if(intelligence==1){
-                value = dummyBoard.evaluateBoard(isWhite);
+                value = dummyBoard.evaluateBoard();
+                if (!isWhite) {
+                    value = -value;
+                }
             }
             else{
-                value = -this.getBestMove(dummyBoard, intelligence-1, !isWhite).getValue();
+                Move opponentBest = this.getBestMove(dummyBoard, intelligence - 1, !isWhite);
+                value = -opponentBest.getValue();
             }
-            //check if this value is bigger than previous move's value
-            if(value>bestValue){
+            if(value > bestValue){
                 bestValue=value;
                 bestMove=move;
             }
@@ -54,9 +100,10 @@ public class PlayerComputer implements Player {
             return;
         }
         Move move = this.getBestMove(this.board, this.AILevel, this.isWhite);
+        if (move == null || move.getX() < 1|| move.getY() < 1) {
+            this.referee.nextMove();
+            return;
+        }
         this.referee.computerAddPiece(move);
-
-
-
     }
 }

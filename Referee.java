@@ -26,23 +26,35 @@ public class Referee {
     /**
      * Constructor
      */
-    public Referee(Player[] players, Board board, Pane pane, Label scoreLabel, Label turnLabel){
+    public Referee(Board board, Pane pane, Label scoreLabel, Label turnLabel){
         this.board = board;
         this.gamePane = pane;
-        this.players = players;
 
         this.scoreLabel = scoreLabel;
         this.turnLabel = turnLabel;
 
-        this.whiteTurn = true; //temporarily white pieces go first, but later will add random turn
+        this.whiteTurn = this.whiteGoesFirst();
 
         this.makeTimeline();
+    }
+    public void setPlayers (Player[] players){
+        this.players = players;
+        this.whiteTurn = !this.whiteTurn; //so it calcels out another switch of turns inside nextMove()
+    }
+    private boolean whiteGoesFirst(){
+        //int randomNum = (int)(Math.random()*2);
+        //return randomNum==0;
+        return true; //for testing
     }
     /**
      * Initiates the next turn by calling makeMove() on the current player whether it's human or computer.
      */
     public void nextMove(){
-        this.checkForEndGame();
+        this.whiteTurn = !this.whiteTurn;
+        this.updateTurnLabel();
+        if (this.checkForEndGame()) {
+            return; //stop calling other players
+        }
         if(this.whiteTurn){
             this.players[0].makeMove();
         }
@@ -99,8 +111,7 @@ public class Referee {
             Game.blackScore++;
         }
         this.updateScoreLabel();
-        this.whiteTurn = !this.whiteTurn; //changing turn after adding piece and flipping pieces
-        this.updateTurnLabel();
+         //changing turn after adding piece and flipping pieces
         this.nextMove();
     }
     /**
@@ -122,12 +133,14 @@ public class Referee {
         this.board.updateLegalMoves(isWhite);
         return !this.board.getLegalMoves().isEmpty();
     }
-    public void checkForEndGame(){
+    public boolean checkForEndGame(){
         boolean player1CanMove = this.playerHasMove(true);
         boolean player2CanMove = this.playerHasMove(false);
         if (!player1CanMove && !player2CanMove) {
             this.endGame();
+            return true;
         }
+        return false;
     }
     private void endGame(){
         String result;
@@ -140,7 +153,7 @@ public class Referee {
         else {
             result = "GAME OVER: It's a tie!";
         }
-        this.scoreLabel.setText(result);
+        this.turnLabel.setText(result);
         //and stop everything
     }
     public boolean getTurn(){
@@ -151,5 +164,11 @@ public class Referee {
                 (ActionEvent e) -> this.waitAndAddPiece());
         this.timeline = new Timeline(kf);
         this.timeline.setCycleCount(1);
+    }
+    //method for game reset since only referee has access to timeline and has update labels methods
+    public void resetGame(){
+        this.updateScoreLabel();
+        this.timeline.stop();
+        this.whiteTurn = this.whiteGoesFirst();
     }
 }

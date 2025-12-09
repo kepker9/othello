@@ -12,3 +12,6 @@ Potential bells and wistles:
 * display the last move made by a player
 * custom player colors
 
+reset button isn't working and black2 wins white3 if black goes first
+
+need to add random first move generation

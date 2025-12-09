@@ -54,4 +54,7 @@ public class PieceNormal implements Piece {
             Game.blackScore--;
         }
     }
+    public void deleteFromPane(Pane pane){
+        pane.getChildren().remove(this.body);
+    }
 }

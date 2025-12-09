@@ -19,12 +19,16 @@ public class Game {
         this.players = new Player[2];
 
         this.createLabels();
+        this.referee = new Referee(this.board, this.gamePane, this.scoreLabel, this.turnLabel);
+
+
     }
     /**
      * Instantiates two players according to the selected modes (human or some level of AI).
      * Creates the Referee, sets Referee for each player, and starts the first move
      */
-    public void setUpPlayers(int whitePlayerMode, int blackPlayerMode){
+    public void applySettings(int whitePlayerMode, int blackPlayerMode){
+        this.board.highlightPossibleMoves(false);
         switch (whitePlayerMode){
             case 0:
                 this.players[0] = new PlayerHuman(true, this.board);
@@ -54,7 +58,7 @@ public class Game {
                 this.players[1] = new PlayerComputer(3, this.board);
                 break;
         }
-        this.referee = new Referee(this.players, this.board, this.gamePane, this.scoreLabel, this.turnLabel);
+        this.referee.setPlayers(this.players);
         this.players[0].setReferee(this.referee);
         this.players[1].setReferee(this.referee);
         this.referee.nextMove();
@@ -68,4 +72,15 @@ public class Game {
     }
     public Label getScoreLabel() { return this.scoreLabel; }
     public Label getTurnLabel() { return this.turnLabel; }
+    public void resetGame(){
+        blackScore = 2;
+        whiteScore = 2;
+        this.referee.resetGame();
+        this.board.resetBoard(this.gamePane);
+        this.players[0] = null;
+        this.players[1] = null;
+
+    }
+
+
 }

@@ -1,5 +1,7 @@
 package othello;
 
+import java.util.ArrayList;
+
 /**
  * PlayerHuman represents a human-controlled player. On its turn, the human player is allowed to click
  * on the game board. Human player uses Referee methods for move validation and mouse tracking.
@@ -20,7 +22,12 @@ public class PlayerHuman implements Player{
      */
     public void makeMove(){
         this.board.updateLegalMoves(this.isWhite);
-        this.board.highlightPossibleMoves();
+        ArrayList<Move> moves = this.board.getLegalMoves();
+        if (moves.isEmpty()) {//skip turn
+            this.referee.nextMove();
+            return;
+        }
+        this.board.highlightPossibleMoves(true);
         this.referee.activateMouse();
     }
 }
