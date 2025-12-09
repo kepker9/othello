@@ -10,15 +10,16 @@ public class PlayerHuman implements Player{
     private Referee referee;
     private boolean isWhite;
     private Board board;
+    /**
+     * Constructs human player with specified color.
+     */
     public PlayerHuman(boolean isWhite, Board board){
         this.isWhite = isWhite;
         this.board = board;
     }
     public void setReferee(Referee referee){this.referee = referee;}
     /**
-     * This method starts player's turn.
-     *
-     * Highlights all possible squares to play and activates mouse input so the user may choose a square.
+     * Starts player's turn by highlighting legal moves and enabling mouse input.
      */
     public void makeMove(){
         this.board.updateLegalMoves(this.isWhite);

@@ -40,9 +40,6 @@ public class Controls {
 
     this.setupInstructions();
 
-
-    /* TODO: Add score & turn labels. These should be contained in whatever class is controlling turn-taking, but
-        be sure to add them to the this.controlsPane here!  */
     this.scoreLabel = this.game.getScoreLabel();
     this.turnLabel = this.game.getTurnLabel();
     this.controlsPane.getChildren().addAll(this.scoreLabel, this.turnLabel);
@@ -50,8 +47,6 @@ public class Controls {
     this.setupMenu();
     this.setupGameButtons();
   }
-  //done
-  // TODO: Be sure to use this method to add the control pane to the this.root pane in Pane Organizer
   public Pane getPane() {
     return this.controlsPane;
   }
@@ -111,7 +106,6 @@ public class Controls {
       // Enables deterministic button when Computer player selected.
 
     }
-
     // Checkbox for deterministic play. Only enabled when computer player
     // selected. This is ONLY for Bells&Whistles
 

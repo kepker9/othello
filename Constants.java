@@ -12,7 +12,8 @@ public class Constants {
     public static int SCENE_HEIGHT = SQUARE_WIDTH*10;
     public static int SCENE_WIDTH = SCENE_HEIGHT+CONTROLS_PANE_WIDTH;
 
-    public static double TIME_BETWEEN_COMPUTER_MOVES = 0.05;
+    public static double TIME_BETWEEN_COMPUTER_MOVES = 0.25;
+    public static double ANIMATION_TIME = 0.02;
 
     public static final int[][] WEIGHTS = {
             {200,-70, 30, 25, 25, 30,-70,200},

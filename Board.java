@@ -14,16 +14,20 @@ public class Board {
     private Square[][] squares;
     private Piece[][] pieces;
     private ArrayList<Move> legalMoves;
-
+    /**
+     * Constructs a new board with starting pieces and instantiates required arrays and lists.
+     */
     public Board(Pane pane){
         this.squares = new Square[10][10]; //column first then row; x first then y
         this.pieces = new PieceNormal[10][10]; //indexes 0 and 9 are always empty
         this.legalMoves = new ArrayList<>();
         this.generateBoard(pane);
         this.setInitialPieces(pane);
-
-        ArrayList<int[]> legalMovesList = new ArrayList<>();
     }
+    /**
+     * Creates a copy of an existing board for the minimax simulation of computer moves.
+     * Uses PieceDummy objects to avoid graphical appearance on the pane during minimax calculations.
+     */
     public Board(Board original) {
         this.pieces = new PieceDummy[10][10];
         for (int x = 0; x < 10; x++) {
@@ -55,7 +59,7 @@ public class Board {
         }
     }
     /**
-     * Places the initial four pieces
+     * Places the initial four othello pieces
      */
     private void setInitialPieces(Pane pane){
         this.pieces[4][4] = new PieceNormal(4, 4, Color.WHITE, pane);
@@ -63,9 +67,15 @@ public class Board {
         this.pieces[4][5] = new PieceNormal(4, 5, Color.BLACK, pane);
         this.pieces[5][4] = new PieceNormal(5, 4, Color.BLACK, pane);
     }
+    /**
+     * Adds a visible piece to the board during normal gameplay.
+     */
     public void addPiece(int x, int y, Color color, Pane gamePane){
         this.pieces[x][y] = new PieceNormal(x, y, color, gamePane);
     }
+    /**
+     * Adds a dummy piece and flips opponent pieces during minimax calculations without visual updates.
+     */
     public void addDummyPiece(Move move, boolean isWhite){
         //flip dummy pieces and then add a piece
         int x = move.getX();
@@ -98,7 +108,7 @@ public class Board {
         }
     }
     /**
-     * Checks if placing a piece at the given coordinates creates a “sandwich” in at least one direction.
+     * Checks if placing a piece at the given coordinates creates a “sandwich” in any direction.
      */
     private boolean checkIfSandwich(int x, int y, boolean isWhiteTurn){
         Color color;
@@ -146,7 +156,7 @@ public class Board {
         }
     }
     /**
-     * Flips pieces in all 8 directions if possible
+     * Flips pieces in all 8 directions if possible.
      */
     private void flipPieces(int x, int y, Color color){
         for (int deltaX = -1; deltaX <=1; deltaX++){
@@ -166,7 +176,7 @@ public class Board {
         }
     }
     /**
-     * Highlights all legal move squares for the current player
+     * Highlights or unhighlights squares from legal moves.
      */
     public void highlightPossibleMoves(boolean highlight){
         Color color;
@@ -183,8 +193,8 @@ public class Board {
         }
     }
     /**
-     * Handles the action of clicking a highlighted square. If the square is a valid move, it resets all
-     * square colors to default dark green color and returns true. Otherwise, rejects the click and returns false.
+     * Processes a click on a game square. If square has a legal move, puts there a
+     * piece and flips captured pieces.
      */
     //this method also flips all the pieces!
     public boolean clickedLegalSquare(int squareX, int squareY, boolean whiteTurn){
@@ -204,8 +214,11 @@ public class Board {
             }
         }
         return false;
-
     }
+    /**
+     * Evaluates board state for minimax.
+     * Positive values mean white is winning, negative - black.
+     */
     public int evaluateBoard(){
         int score = 0;
         for (int x = 1; x <= 8; x++) {
@@ -226,6 +239,9 @@ public class Board {
         }
         return score;
     }
+    /**
+     * Updates list of legal moves.
+     */
     public void updateLegalMoves(boolean isWhite) {
         ArrayList<Move> moves = new ArrayList<>();
         for (int x = 1; x <=8; x++) {
@@ -241,6 +257,9 @@ public class Board {
     public ArrayList<Move> getLegalMoves(){
         return this.legalMoves;
     }
+    /**
+     * Checks if the game is over by checking if neither player can move.
+     */
     public boolean isGameOver() {
         this.updateLegalMoves(true);
         boolean whiteCanMove = !this.getLegalMoves().isEmpty();
@@ -248,6 +267,9 @@ public class Board {
         boolean blackCanMove = !this.getLegalMoves().isEmpty();
         return !whiteCanMove && !blackCanMove;
     }
+    /**
+     * Resets board to initial state.
+     */
     public void resetBoard(Pane pane) {
         this.highlightPossibleMoves(false);
         for (int x = 1; x <= 8; x++) {

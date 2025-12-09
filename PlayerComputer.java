@@ -2,19 +2,27 @@ package othello;
 
 import java.util.ArrayList;
 
+/**
+ * PlayerComputer represents AI players with different difficulty levels (1-3).
+ * Uses minimax algorithm to determine optimal moves.
+ */
 public class PlayerComputer implements Player {
     private Referee referee;
     private int AILevel;
     private Board board;
-    private boolean isWhite;
+    /**
+     * Constructs computer player with specified AI level.
+     */
     public PlayerComputer(int AILevel, Board board) {
         this.AILevel = AILevel;
         this.board = board;
     }
-
     public void setReferee(Referee referee) {
         this.referee = referee;
     }
+    /**
+     * Determines the best move using minimax algorithm.
+     */
     private Move getBestMove(Board board, int intelligence, boolean isWhite) {
         if (board.isGameOver()) {
             Move fakeMove = new Move(-1, -1);
@@ -78,7 +86,8 @@ public class PlayerComputer implements Player {
                 }
             }
             else{
-                Move opponentBest = this.getBestMove(dummyBoard, intelligence - 1, !isWhite);
+                Move opponentBest = this.getBestMove(dummyBoard,
+                        intelligence - 1, !isWhite);
                 value = -opponentBest.getValue();
             }
             if(value > bestValue){
@@ -89,17 +98,19 @@ public class PlayerComputer implements Player {
         bestMove.setValue(bestValue);
         return bestMove;
     }
-
+    /**
+     * Calculates best move using minimax method and plays this move.
+     */
     public void makeMove() {
-        this.isWhite = this.referee.getTurn();
-        this.board.updateLegalMoves(this.isWhite);
+        boolean isWhite = this.referee.getTurn();
+        this.board.updateLegalMoves(isWhite);
         ArrayList<Move> moves = this.board.getLegalMoves();
 
         if (moves.isEmpty()) {//skip turn
             this.referee.nextMove();
             return;
         }
-        Move move = this.getBestMove(this.board, this.AILevel, this.isWhite);
+        Move move = this.getBestMove(this.board, this.AILevel, isWhite);
         if (move == null || move.getX() < 1|| move.getY() < 1) {
             this.referee.nextMove();
             return;

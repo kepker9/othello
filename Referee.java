@@ -24,7 +24,7 @@ public class Referee {
     private Move pendingMove;
 
     /**
-     * Constructor
+     * Constructs a Referee with game components
      */
     public Referee(Board board, Pane pane, Label scoreLabel, Label turnLabel){
         this.board = board;
@@ -37,10 +37,17 @@ public class Referee {
 
         this.makeTimeline();
     }
+    /**
+     * Connects players to referee.
+     */
     public void setPlayers (Player[] players){
         this.players = players;
         this.whiteTurn = !this.whiteTurn; //so it calcels out another switch of turns inside nextMove()
     }
+    /**
+     * Determines which player goes first. By default, for convenience, it's always white.
+     * Randomization can be enabled by uncommenting two lines of code
+     */
     private boolean whiteGoesFirst(){
         //uncomment next two lines for random first turn generation. By default white goes first
         //int randomNum = (int)(Math.random()*2);
@@ -48,7 +55,7 @@ public class Referee {
         return true;
     }
     /**
-     * Initiates the next turn by calling makeMove() on the current player whether it's human or computer.
+     * Switches players' turns and initiates their move. Checks for game end.
      */
     public void nextMove(){
         this.whiteTurn = !this.whiteTurn;
@@ -62,7 +69,6 @@ public class Referee {
         else{
             this.players[1].makeMove();
         }
-
     }
     /**
      * Converts a mouse click output into board coordinates and if the piece can be placed in the clicked
@@ -89,18 +95,24 @@ public class Referee {
     private void deactivateMouse(){
         this.gamePane.setOnMouseClicked(null);
     }
+    /**
+     * Schedules a computer move to be placed after a delay for visual effect.
+     */
     public void computerAddPiece(Move move){
         this.pendingMove = move;
         this.timeline.play();
     }
+    /**
+     * Places computer move on board after delay
+     */
     private void waitAndAddPiece(){
         this.timeline.stop();
         this.board.clickedLegalSquare(this.pendingMove.getX(), this.pendingMove.getY(), this.whiteTurn);
         this.addPiece(this.pendingMove);
     }
     /**
-     * Adds a new piece to the board at the given coordinates, switches turns, updates game labels,
-     * and starts the next move.
+     * Adds a new piece to the board at the given coordinates, switches turns,
+     * updates score label, and starts next player's move.
      */
     private void addPiece(Move move){
         if (this.whiteTurn){
@@ -115,7 +127,7 @@ public class Referee {
         this.nextMove();
     }
     /**
-     * Updates the label that says whose turn to move
+     * Updates the label that says whose turn is to move.
      */
     private void updateTurnLabel() {
         if (this.whiteTurn)
@@ -129,10 +141,16 @@ public class Referee {
     private void updateScoreLabel() {
         this.scoreLabel.setText("White: " + Game.whiteScore + " - Black: " + Game.blackScore);
     }
+    /**
+     * Checks if player has any legal moves available.
+     */
     private boolean playerHasMove(boolean isWhite) {
         this.board.updateLegalMoves(isWhite);
         return !this.board.getLegalMoves().isEmpty();
     }
+    /**
+     * Checks if the game is over. If game is over, triggers end game sequence.
+     */
     public boolean checkForEndGame(){
         boolean player1CanMove = this.playerHasMove(true);
         boolean player2CanMove = this.playerHasMove(false);
@@ -142,6 +160,9 @@ public class Referee {
         }
         return false;
     }
+    /**
+     * Ends game. Determines winner and displays the result.
+     */
     private void endGame(){
         String result;
         if (Game.whiteScore > Game.blackScore){
@@ -159,13 +180,18 @@ public class Referee {
     public boolean getTurn(){
         return this.whiteTurn;
     }
+    /**
+     * Creates timeline for delaying computer moves.
+     */
     private void makeTimeline(){
         KeyFrame kf = new KeyFrame(Duration.seconds(Constants.TIME_BETWEEN_COMPUTER_MOVES),
                 (ActionEvent e) -> this.waitAndAddPiece());
         this.timeline = new Timeline(kf);
         this.timeline.setCycleCount(1);
     }
-    //method for game reset since only referee has access to timeline and has update labels methods
+    /**
+     * Resets game to initial state: stops timeline, updates labels, resets turn order.
+     */
     public void resetGame(){
         this.updateScoreLabel();
         this.turnLabel.setText("");
