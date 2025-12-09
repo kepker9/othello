@@ -1,13 +1,54 @@
-TO WRITE ABOUT IN README:
+othello README
 
-* referee tracks clicks instead of players
-*bug - when pressing applySettings turn goes to white but white can place pieces to all lime squares
-*players can go twice in a row
+Overview:
 
+    This program is a recreation of othello game with different gameplay
+    options:
+        1) human vs human
+        2) human vs AI
+        3) AI vs AI
+    AIs have different levels from 1 to 3.
+    AIs use minimax algorithm for their move selection. For a better playing
+    experience, squares where human player can click are highlighted in lime, and the
+    last move made by the opposite player is highlighted in purple.
 
+Design Choices:
 
-Potential bells and whistles:
-* animated flipping
-* turning on and off highliting
-* display the last move made by a player
-* custom player colors
+    * Main classes and their responsibilities are:
+        1) Game - launches the game
+        2) Board - game logic
+        3) Referee - turn management
+        4) PlayerHuman and PlayerComputer - player implementations
+        5) PieceNormal and PieceDummy - piece representations with and without graphics
+
+    * Board is represented by 10x10 array and includes border squares. It makes
+    conversion between pixel and array coordinates easier
+
+    * Classes PieceNormal and PieceDummy both implement a common Piece interface. It
+    allows efficient minimax work without creating unnecessary JavaFX objects and makes
+    Board class simpler since it doesn't have separate arrays and methods for each Piece type.
+
+    * checkOneDirection() method checks if the given direction can be flipped.
+    However, it also has a flippingMode boolean parameter that can turn this method
+    into flipping mode, so the same code is reused in the program efficiently.
+
+    * Used a Timeline for animation of piece flipping. Animation consists of 12
+    frames where each frame piece shrinks a little bit in it's X coordinate and then
+    expand back. Since it's very fast, it creates an illusion of a very smooth animation.
+
+    * Referee validates and processes mouse clicks when it's a turn for human player
+    move. When it's a human player's turn, PlayerHuman simply highlights legal moves
+    and hands control to the Referee.
+
+Known Bugs:
+
+    Weren't found any
+
+Extra Credit:
+
+    1) Animated flipping of pieces
+    2) Highlighting of the previous move
+
+Hours spent:
+
+    30-35 hours

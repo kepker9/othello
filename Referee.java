@@ -123,6 +123,7 @@ public class Referee {
             this.board.addPiece(move.getX(), move.getY(), Color.BLACK, this.gamePane);
             Game.blackScore++;
         }
+        this.board.highlightPreviousMove(move);
         this.updateScoreLabel();
         this.nextMove();
     }

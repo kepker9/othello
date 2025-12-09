@@ -89,20 +89,20 @@ public class PieceNormal implements Piece {
      */
     private void flipAnimate(){
         if(this.animationFrame<6){
-            this.body.setRadiusX(this.body.getRadiusX()-3.5);
+            this.body.setRadiusX(this.body.getRadiusX()-
+                    Constants.PIECE_RADIUS/6);
             this.animationFrame++;
         }
         else if (this.animationFrame==6){
             this.body.setFill(this.color);
-            this.body.setRadiusX(this.body.getRadiusX()-3.5);
+            this.body.setRadiusX(this.body.getRadiusX()-
+                    Constants.PIECE_RADIUS/6);
             this.animationFrame++;
         }
         else {
-            this.body.setRadiusX(this.body.getRadiusX()+3.5);
+            this.body.setRadiusX(this.body.getRadiusX()+
+                    Constants.PIECE_RADIUS/6);
             this.animationFrame++;
         }
-
-
     }
-
 }

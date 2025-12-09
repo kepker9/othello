@@ -14,6 +14,7 @@ public class Board {
     private Square[][] squares;
     private Piece[][] pieces;
     private ArrayList<Move> legalMoves;
+    private Move previousMove; //for bells and whistles highlighting the previous move
     /**
      * Constructs a new board with starting pieces and instantiates required arrays and lists.
      */
@@ -23,6 +24,9 @@ public class Board {
         this.legalMoves = new ArrayList<>();
         this.generateBoard(pane);
         this.setInitialPieces(pane);
+        //assigning a square for previousMove that definitely will not be
+        //used for the first move of the game (corner)
+        this.previousMove = new Move(1,1);
     }
     /**
      * Creates a copy of an existing board for the minimax simulation of computer moves.
@@ -48,12 +52,12 @@ public class Board {
                 if (x==0 || y==0 || x==9 || y==9){
                     //borderSquare is true because these squares are just for visuals.
                     //user cannot put pieces on them
-                    this.squares[x][y] = new Square(x*Constants.SQUARE_WIDTH, y*Constants.SQUARE_WIDTH,
-                            true, pane);
+                    this.squares[x][y] = new Square(x*Constants.SQUARE_WIDTH,
+                            y*Constants.SQUARE_WIDTH, true, pane);
                 }
                 else{
-                    this.squares[x][y] = new Square(x*Constants.SQUARE_WIDTH, y*Constants.SQUARE_WIDTH,
-                            false, pane);
+                    this.squares[x][y] = new Square(x*Constants.SQUARE_WIDTH,
+                            y*Constants.SQUARE_WIDTH, false, pane);
                 }
             }
         }
@@ -281,6 +285,17 @@ public class Board {
             }
         }
         this.setInitialPieces(pane);
+        //unhighlight the previous move
+        this.squares[this.previousMove.getX()][this.previousMove.getY()].setColor(Color.DARKGREEN);
+        this.previousMove = new Move (1,1);
     }
-
+    /**
+     * Highlights the move that was just made and unhighlights a move
+     * that was made before
+     */
+    public void highlightPreviousMove(Move previousMove){
+        this.squares[this.previousMove.getX()][this.previousMove.getY()].setColor(Color.DARKGREEN);
+        this.squares[previousMove.getX()][previousMove.getY()].setColor(Color.MEDIUMPURPLE);
+        this.previousMove = previousMove;
+    }
 }
