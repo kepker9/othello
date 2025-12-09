@@ -42,9 +42,10 @@ public class Referee {
         this.whiteTurn = !this.whiteTurn; //so it calcels out another switch of turns inside nextMove()
     }
     private boolean whiteGoesFirst(){
+        //uncomment next two lines for random first turn generation. By default white goes first
         //int randomNum = (int)(Math.random()*2);
         //return randomNum==0;
-        return true; //for testing
+        return true;
     }
     /**
      * Initiates the next turn by calling makeMove() on the current player whether it's human or computer.
@@ -111,7 +112,6 @@ public class Referee {
             Game.blackScore++;
         }
         this.updateScoreLabel();
-         //changing turn after adding piece and flipping pieces
         this.nextMove();
     }
     /**
@@ -168,6 +168,7 @@ public class Referee {
     //method for game reset since only referee has access to timeline and has update labels methods
     public void resetGame(){
         this.updateScoreLabel();
+        this.turnLabel.setText("");
         this.timeline.stop();
         this.whiteTurn = this.whiteGoesFirst();
     }

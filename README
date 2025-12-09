@@ -6,12 +6,8 @@ TO WRITE ABOUT IN README:
 
 
 
-Potential bells and wistles:
+Potential bells and whistles:
 * animated flipping
 * turning on and off highliting
 * display the last move made by a player
 * custom player colors
-
-reset button isn't working and black2 wins white3 if black goes first
-
-need to add random first move generation
