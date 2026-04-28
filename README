@@ -1,5 +1,3 @@
-othello README
-
 Overview:
 
     This program is a recreation of othello game with different gameplay
@@ -39,16 +37,3 @@ Design Choices:
     * Referee validates and processes mouse clicks when it's a turn for human player
     move. When it's a human player's turn, PlayerHuman simply highlights legal moves
     and hands control to the Referee.
-
-Known Bugs:
-
-    Weren't found any
-
-Extra Credit:
-
-    1) Animated flipping of pieces
-    2) Highlighting of the previous move
-
-Hours spent:
-
-    30-35 hours
